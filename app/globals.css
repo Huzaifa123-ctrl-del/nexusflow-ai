@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 99%;
+    --foreground: 240 10% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 10%;
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 4% 42%;
+    --accent: 240 5% 95%;
+    --accent-foreground: 240 10% 10%;
+    --secondary: 240 5% 95%;
+    --secondary-foreground: 240 10% 10%;
+    --border: 240 6% 90%;
+    --input: 240 6% 88%;
+    --primary: 234 56% 56%;
+    --primary-foreground: 0 0% 100%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --ring: 234 56% 56%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 240 8% 6%;
+    --foreground: 240 6% 92%;
+    --card: 240 7% 8.5%;
+    --card-foreground: 240 6% 92%;
+    --muted: 240 6% 12%;
+    --muted-foreground: 240 5% 62%;
+    --accent: 240 6% 13%;
+    --accent-foreground: 240 6% 92%;
+    --secondary: 240 6% 13%;
+    --secondary-foreground: 240 6% 92%;
+    --border: 240 6% 16%;
+    --input: 240 6% 18%;
+    --primary: 234 70% 68%;
+    --primary-foreground: 240 10% 8%;
+    --destructive: 0 65% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --ring: 234 70% 68%;
+  }
+
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv11", "ss01";
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
