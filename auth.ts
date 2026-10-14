@@ -9,7 +9,6 @@ import { loginSchema } from "@/lib/validations";
 import { createUserWithOrg } from "@/lib/users";
 import { User } from "@/models/User";
 
-    console.log("MY GOOGLE ID IS:", env.GOOGLE_CLIENT_ID)
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
