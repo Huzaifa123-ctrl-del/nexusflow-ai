@@ -2,8 +2,7 @@ import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import { authConfig } from "@/auth.config";
-import { env } from "@/lib/env";
+import { authConfig } from "./auth.config";
 import { connectDB } from "@/lib/db";
 import { loginSchema } from "@/lib/validations";
 import { createUserWithOrg } from "@/lib/users";
@@ -11,24 +10,23 @@ import { User } from "@/models/User";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
  ...authConfig,
+  secret: process.env.NEXTAUTH_SECRET,
+  trustHost: true,
   providers: [
     Google({
-      clientId: env.GOOGLE_CLIENT_ID,
-      clientSecret: env.GOOGLE_CLIENT_SECRET
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
     Credentials({
       credentials: { email: {}, password: {} },
       async authorize(raw) {
         const parsed = loginSchema.safeParse(raw);
         if (!parsed.success) return null;
-
         await connectDB();
         const user = await User.findOne({ email: parsed.data.email }).select("+passwordHash");
         if (!user?.passwordHash) return null;
-
         const valid = await bcrypt.compare(parsed.data.password, user.passwordHash);
         if (!valid) return null;
-
         return {
           id: user.id,
           name: user.name,
@@ -46,7 +44,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async signIn({ user, account }) {
       if (account?.provider!== "google") return true;
       if (!user.email) return false;
-
       try {
         await connectDB();
         const existing = await User.findOne({ email: user.email.toLowerCase() });
@@ -62,22 +59,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return true;
     },
-    async jwt({ token, trigger }) {
-      try {
-        if ((trigger === "signIn" || trigger === "update" ||!token.id) && token.email) {
-          await connectDB();
-          const dbUser = await User.findOne({ email: token.email.toLowerCase() });
-          if (dbUser) {
-            token.id = dbUser.id;
-            (token as any).role = dbUser.role;
-            (token as any).orgId = dbUser.organization?.toString();
-            (token as any).plan = dbUser.subscription.plan;
-          }
-        }
-      } catch (err) {
-        console.error("JWT callback error", err);
+    async session({ session, token }) {
+      if (token) {
+        (session.user as any).id = token.id as string;
+        (session.user as any).role = (token as any).role;
+        (session.user as any).orgId = (token as any).orgId;
       }
-      return token;
+      return session;
     },
   },
 });
