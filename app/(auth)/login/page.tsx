@@ -1,23 +1,19 @@
-import type { Metadata } from "next";
-import { GoogleButton } from "@/components/auth/google-button";
-import { LoginForm } from "@/components/auth/login-form";
-
-export const metadata: Metadata = { title: "Sign in" };
+"use client"
+import { signIn } from "next-auth/react"
 
 export default function LoginPage() {
   return (
-    <div className="space-y-6">
-      <div className="space-y-1 text-center">
-        <h1 className="text-xl font-semibold tracking-tight">Sign in to NexusFlow</h1>
-        <p className="text-sm text-muted-foreground">Pick up where you left off.</p>
+    <div className="flex min-h-screen items-center justify-center bg-black text-white">
+      <div className="text-center p-8 border border-zinc-800 rounded-xl">
+        <h1 className="text-2xl font-bold mb-2">NexusFlow AI</h1>
+        <p className="text-zinc-400 mb-6">Login to access your dashboard</p>
+        <button
+          onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+          className="bg-white text-black px-6 py-2 rounded-lg font-medium hover:bg-zinc-200"
+        >
+          Continue with Google
+        </button>
       </div>
-      <GoogleButton />
-      <div className="flex items-center gap-3 text-xs text-muted-foreground">
-        <span className="h-px flex-1 bg-border" />
-        or use email
-        <span className="h-px flex-1 bg-border" />
-      </div>
-      <LoginForm />
     </div>
-  );
+  )
 }
