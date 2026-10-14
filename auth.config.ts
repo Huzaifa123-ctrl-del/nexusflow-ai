@@ -22,14 +22,14 @@ export const authConfig = {
       }
       return true;
     },
-    session({ session, token }) {
-      if (token.id) {
-        session.user.id = token.id;
-        session.user.role = token.role ?? "MEMBER";
-        session.user.orgId = token.orgId ?? "";
-        session.user.plan = token.plan ?? "free";
-      }
-      return session;
-    },
+  session({ session, token }) {
+  if (token) {
+    (session.user as any).id = token.id as string;
+    (session.user as any).role = (token as any).role ?? "MEMBER";
+    (session.user as any).orgId = (token as any).orgId ?? "";
+    (session.user as any).plan = (token as any).plan ?? "free";
+  }
+  return session;
+},
   },
 } satisfies NextAuthConfig;
